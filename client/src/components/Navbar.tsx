@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
 const Navbar = () => {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (darkMode) {
@@ -23,7 +23,6 @@ const Navbar = () => {
         <span className="text-green-500">Pilot</span>
       </div>
 
-      {/* Toggle */}
       <button
         onClick={() => setDarkMode(!darkMode)}
         className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 

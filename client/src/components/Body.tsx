@@ -3,6 +3,8 @@ import { useState } from "react";
 import { LayoutDashboard, ArrowUpDown, Bell } from "lucide-react";
 import Card from "./Card";
 import useFinanceStore from "../store/dummyStore";
+import PieChartComponent from "./Pie";
+import Insights from "./Insights";
 
 export default function Body() {
   const [activeTab, setActiveTab] = useState(0);
@@ -14,7 +16,6 @@ export default function Body() {
   ];
 
   const transactions = useFinanceStore((state) => state.transactions);
-
   const income = transactions
     .filter((t) => t.type === "income")
     .reduce((acc, t) => acc + t.amount, 0);
@@ -37,9 +38,9 @@ export default function Body() {
     .slice(0, 5);
 
   return (
-    <div className="flex min-h-[calc(100vh-80px)] bg-[#F8FAFC] dark:bg-[#060707] text-gray-900 dark:text-white">
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-[#060707] text-gray-900 dark:text-white">
 
-      <aside className="w-64 p-4 border-r border-gray-200 dark:border-gray-800 relative">
+      <aside className="w-64 p-4 border-r border-gray-200 dark:border-gray-800 relative h-full">
         <span
           className="absolute left-0 w-1 bg-green-500 rounded-r-lg transition-all duration-300"
           style={{
@@ -65,7 +66,7 @@ export default function Body() {
                   }`}
               >
                 <Icon
-                  className={`w-5 h-5 transition ${
+                  className={`w-5 h-5 ${
                     isActive
                       ? "text-green-500"
                       : "group-hover:text-green-400"
@@ -78,15 +79,17 @@ export default function Body() {
         </nav>
       </aside>
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 overflow-y-auto scroll-smooth">
         <h2 className="text-2xl font-semibold mb-6">
           {tabs[activeTab].label}
         </h2>
 
         <div key={activeTab} className="animate-fadeSlide">
 
+          {/* Dashboard */}
           {activeTab === 0 && (
             <>
+              {/* Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <Card title="Total Balance" value={`₹${totalBalance}`} change="+2.5%" />
                 <Card title="Income" value={`₹${income}`} change="+1.8%" />
@@ -94,40 +97,57 @@ export default function Body() {
                 <Card title="Savings" value={`₹${savings}`} change="+3.2%" />
               </div>
 
-              <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
-                <h3 className="text-lg font-semibold mb-4">
-                  Recent Transactions
-                </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <div className="space-y-4">
-                  {recentTransactions.map((t) => (
-                    <div
-                      key={t.id}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
-                    >
-                      <div>
-                        <p className="font-medium">{t.category}</p>
-                        <p className="text-sm text-gray-500">{t.date}</p>
-                      </div>
-
-                      <span
-                        className={`font-semibold ${
-                          t.type === "income"
-                            ? "text-green-500"
-                            : t.type === "expense"
-                            ? "text-red-500"
-                            : "text-blue-500"
-                        }`}
-                      >
-                        {t.type === "expense" ? "-" : "+"}₹{t.amount}
-                      </span>
-                    </div>
-                  ))}
+                {/* Pie Chart */}
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Expense Breakdown
+                  </h3>
+                  <div className="flex justify-center">
+                    <PieChartComponent />
+                  </div>
                 </div>
+
+                {/* Recent Transactions */}
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Recent Transactions
+                  </h3>
+
+                  <div className="space-y-4">
+                    {recentTransactions.map((t) => (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
+                      >
+                        <div>
+                          <p className="font-medium">{t.category}</p>
+                          <p className="text-sm text-gray-500">{t.date}</p>
+                        </div>
+
+                        <span
+                          className={`font-semibold ${
+                            t.type === "income"
+                              ? "text-green-500"
+                              : t.type === "expense"
+                              ? "text-red-500"
+                              : "text-blue-500"
+                          }`}
+                        >
+                          {t.type === "expense" ? "-" : "+"}₹{t.amount}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
               </div>
+              <Insights/>
             </>
           )}
 
+          {/* Transactions Tab */}
           {activeTab === 1 && (
             <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
               <p className="text-gray-600 dark:text-gray-400">
@@ -136,6 +156,7 @@ export default function Body() {
             </div>
           )}
 
+          {/* Notifications Tab */}
           {activeTab === 2 && (
             <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-800">
               <p className="text-gray-600 dark:text-gray-400">
