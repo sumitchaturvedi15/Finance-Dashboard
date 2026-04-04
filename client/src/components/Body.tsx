@@ -48,13 +48,14 @@ export default function Body() {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-white text-gray-900 dark:bg-zinc-950 dark:text-white">
 
+      {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div
           role="button"
           tabIndex={0}
           onClick={() => setIsOpen(true)}
           onKeyDown={(e) => e.key === "Enter" && setIsOpen(true)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer active:scale-95 transition"
         >
           <Menu className="w-5 h-5" />
         </div>
@@ -64,8 +65,9 @@ export default function Body() {
         </h2>
       </div>
 
+      {/* Sidebar */}
       <aside
-        className={`fixed md:static top-0 left-0 h-full w-64 bg-white dark:bg-zinc-950 border-r border-gray-200 dark:border-zinc-800 p-4 z-50 transform transition-transform duration-300
+        className={`fixed md:static top-0 left-0 h-full w-64 bg-white dark:bg-zinc-950 border-r border-gray-200 dark:border-zinc-800 p-4 z-50 transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <div className="flex items-center justify-between md:hidden mb-6">
@@ -76,7 +78,7 @@ export default function Body() {
             tabIndex={0}
             onClick={() => setIsOpen(false)}
             onKeyDown={(e) => e.key === "Enter" && setIsOpen(false)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer active:scale-95 transition"
           >
             <X className="w-5 h-5" />
           </div>
@@ -102,14 +104,14 @@ export default function Body() {
                     setIsOpen(false);
                   }
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 group active:scale-95
                   ${
                     isActive
-                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 shadow-sm"
                       : "hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-gray-400"
                   }`}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span className="font-medium">{tab.label}</span>
               </div>
             );
@@ -117,6 +119,7 @@ export default function Body() {
         </nav>
       </aside>
 
+      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 md:hidden"
@@ -124,7 +127,8 @@ export default function Body() {
         />
       )}
 
-      <main className="flex-1 min-w-0 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-zinc-900">
+      {/* Main Content */}
+      <main className="flex-1 min-w-0 overflow-y-auto scroll-smooth p-4 md:p-6 bg-gray-50 dark:bg-zinc-900">
 
         <h2 className="hidden md:block text-2xl font-semibold mb-6">
           {tabs[activeTab].label}
@@ -132,6 +136,7 @@ export default function Body() {
 
         <div key={activeTab}>
 
+          {/* DASHBOARD */}
           {activeTab === 0 && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
@@ -143,7 +148,7 @@ export default function Body() {
 
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-                <div className="bg-white dark:bg-zinc-950 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
+                <div className="bg-white/70 backdrop-blur-md dark:bg-zinc-950/70 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
                   <h3 className="text-lg font-semibold mb-4">
                     Expense Breakdown
                   </h3>
@@ -152,16 +157,20 @@ export default function Body() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-zinc-950 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
+                {/* Transactions */}
+                <div className="bg-white/70 backdrop-blur-md dark:bg-zinc-950/70 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
                   <h3 className="text-lg font-semibold mb-4">
                     Recent Transactions
                   </h3>
 
-                  <div className="space-y-3 max-h-[350px] overflow-y-auto">
+                  <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
                     {recentTransactions.map((t) => (
                       <div
                         key={t.id}
-                        className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+                        className="flex items-center justify-between p-3 rounded-lg 
+                        hover:bg-gray-100 dark:hover:bg-zinc-800 
+                        hover:scale-[1.02] active:scale-[0.98]
+                        transition-all duration-200 cursor-pointer"
                       >
                         <div>
                           <p className="font-medium">{t.category}</p>
@@ -189,14 +198,16 @@ export default function Body() {
             </>
           )}
 
+          {/* TRANSACTIONS */}
           {activeTab === 1 && (
-            <div className="bg-white dark:bg-zinc-950 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
+            <div className="bg-white/70 backdrop-blur-md dark:bg-zinc-950/70 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-zinc-800">
               <Transactions />
             </div>
           )}
 
+          {/* NOTIFICATIONS */}
           {activeTab === 2 && (
-            <div className="bg-white dark:bg-zinc-950 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800 text-center text-gray-500 dark:text-gray-400">
+            <div className="bg-white/70 backdrop-blur-md dark:bg-zinc-950/70 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-800 text-center text-gray-500 dark:text-gray-400">
               You have no new notifications.
             </div>
           )}

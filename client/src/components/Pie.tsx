@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+"use client";
+import { useMemo, useState } from "react";
 import {
   PieChart,
   Pie as RechartsPie,
@@ -6,6 +7,7 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
+import { motion } from "framer-motion";
 import useFinanceStore from "../store/dummyStore";
 
 type Transaction = {
@@ -21,9 +23,17 @@ type PieItem = {
   value: number;
 };
 
-const COLORS = ["#22c55e", "#ef4444", "#3b82f6", "#f59e0b", "#8b5cf6"];
+const COLORS = [
+  "#22c55e",
+  "#ef4444",
+  "#3b82f6",
+  "#f59e0b",
+  "#8b5cf6",
+];
 
 const PieChartComponent = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const transactions = useFinanceStore(
     (state) => state.transactions as Transaction[]
   );
@@ -43,44 +53,84 @@ const PieChartComponent = () => {
     return Object.values(map);
   }, [transactions]);
 
-  return (
-    <div className="w-full h-[300px] flex flex-col items-center justify-center">
+  const total = data.reduce((acc, curr) => acc + curr.value, 0);
 
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4 }}
+      className="w-full h-[320px] flex flex-col items-center justify-center relative"
+    >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <RechartsPie
             data={data}
             dataKey="value"
-            innerRadius={60}
-            outerRadius={100}
+            innerRadius={65}
+            outerRadius={105}
             paddingAngle={3}
-            cornerRadius={6}
+            cornerRadius={8}
+            onMouseEnter={(_, index) => setActiveIndex(index)}
+            onMouseLeave={() => setActiveIndex(null)}
           >
             {data.map((_, index) => (
               <Cell
                 key={index}
                 fill={COLORS[index % COLORS.length]}
+                style={{
+                  filter:
+                    activeIndex === index
+                      ? "brightness(1.2)"
+                      : "brightness(0.85)",
+                  transition: "all 0.3s ease",
+                }}
               />
             ))}
           </RechartsPie>
 
           <Tooltip
             contentStyle={{
-              borderRadius: "8px",
+              borderRadius: "10px",
               border: "none",
-              backgroundColor: "#111",
+              background: "rgba(24,24,27,0.9)",
+              backdropFilter: "blur(10px)",
               color: "#fff",
               fontSize: "12px",
+              padding: "8px 12px",
             }}
+            cursor={{ fill: "rgba(255,255,255,0.05)" }}
           />
         </PieChart>
       </ResponsiveContainer>
 
+      <div className="absolute flex flex-col items-center justify-center pointer-events-none">
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-xs text-gray-500 dark:text-gray-400"
+        >
+          Total Expense
+        </motion.span>
+
+        <motion.span
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-xl font-bold"
+        >
+          ₹{total}
+        </motion.span>
+      </div>
+
       <div className="flex flex-wrap justify-center gap-3 mt-4">
         {data.map((item, index) => (
-          <div
+          <motion.div
             key={item.name}
-            className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300"
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-2 text-xs px-2 py-1 rounded-lg 
+            bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md 
+            border border-gray-200 dark:border-zinc-800"
           >
             <span
               className="w-3 h-3 rounded-full"
@@ -89,10 +139,10 @@ const PieChartComponent = () => {
               }}
             />
             {item.name}
-          </div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
