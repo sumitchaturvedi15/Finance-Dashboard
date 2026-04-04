@@ -1,4 +1,3 @@
-"use client";
 import { useState, useMemo } from "react";
 import { LayoutDashboard, ArrowUpDown, Bell, Menu, X } from "lucide-react";
 import Card from "./Card";
